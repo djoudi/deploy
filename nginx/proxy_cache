@@ -1,0 +1,10 @@
+## Nginx as transparent cache.
+# Designed to be included to /etc/nginx/nginx.conf http{} block
+# Include this file if you want to use fastcgi_cache across many sites 
+
+proxy_cache_path /var/cache/nginx/proxy-cache levels=1:2 keys_zone=PROXYCACHE:4m max_size=50m inactive=120m; 
+proxy_temp_path /tmp/nginx_proxy/ 1 2;
+proxy_ignore_headers Expires Cache-Control;
+
+# use stale cache on backend fault
+proxy_cache_use_stale   error timeout invalid_header updating http_500 http_502 http_503 http_504;

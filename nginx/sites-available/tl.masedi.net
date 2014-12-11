@@ -1,0 +1,42 @@
+## Lab - lab.masedi.net
+server {
+        listen 80;
+        server_name tl.masedi.net;
+		
+	root /home/bayoe/Webs/public;
+        index index.php index.html index.htm;
+		
+        # Log
+        access_log /var/log/nginx/tl.masedi.net.access.log;
+        error_log /var/log/nginx/tl.masedi.net.error.log;
+		
+        # Global directives configuration. include /etc/nginx/conf.vhost/block.conf;
+        include /etc/nginx/conf.vhost/staticfiles.conf;
+        include /etc/nginx/conf.vhost/restrictions.conf;
+		
+        # Vhost directives configuration (WordPress single, multisite, or other default site config. Use only one config).
+        include /etc/nginx/conf.vhost/site_default.conf;
+		
+        # Pass all .php files onto a php-fpm/php-fcgi server.
+        location ~ \.php$ {
+			try_files $uri =404;
+			
+			fastcgi_split_path_info ^(.+\.php)(/.+)$;
+			#NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
+			fastcgi_index index.php;
+			fastcgi_pass unix:/var/run/php5-fpm.bayoe.sock;
+			
+			# Include FastCGI Params.
+			include /etc/nginx/fastcgi_params;
+			
+			# Overwrite FastCGI Params here.
+			fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+			fastcgi_param SCRIPT_NAME $fastcgi_script_name;
+			
+			# Include FastCGI Configs. 
+			include /etc/nginx/conf.vhost/fastcgi.conf;
+			
+			# Uncomment to Enable PHP FastCGI cache. 
+			#include /etc/nginx/conf.vhost/fastcgi_cache.conf;
+        }
+}
