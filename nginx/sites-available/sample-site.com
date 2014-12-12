@@ -3,25 +3,26 @@ server {
 	#listen   [::]:8080 default ipv6only=on; ## listen for ipv6
 	
 	## Make site accessible from world wide.
-	server_name decoratingcountryhome.net;
+	server_name www.sample-site.com;
 
 	## Log Settings.
-	access_log   /var/log/nginx/decoratingcountryhome.net.access.log;
-	error_log    /var/log/nginx/decoratingcountryhome.net.error.log;
+	access_log   /var/log/nginx/sample-site.com.access.log;
+	error_log    /var/log/nginx/sample-site.com.error.log;
 	
-	root /home/masedi/tagzones/decoratingcountryhome.net;
-	index index.php index.html index.htm;
+	root /home/masedi/Webs/sample-site.com;
+	#index index.php index.html index.htm;
 
 	## Global directives configuration.
-	#include /etc/nginx/conf.vhost/block.conf;
+	include /etc/nginx/conf.vhost/block.conf;
 	include /etc/nginx/conf.vhost/staticfiles.conf;
 	include /etc/nginx/conf.vhost/restrictions.conf;
 
 	## Vhost directives configuration (WordPress single, multisite, or other default site config. Use only one config).
 	#include /etc/nginx/conf.vhost/site_default.conf;
+	include /etc/nginx/conf.vhost/site_wordpress_cached.conf;
 
-	# Custom rewrite rules	
-	include /home/masedi/tagzones/decoratingcountryhome.net/.ngaccess;
+	# Custom rewrite rules, setting per-site basis like .htaccess
+	include /home/masedi/Webs/sample-site.com/.ngxaccess;
 
 	## Pass all .php files onto a php-fpm/php-fcgi server.
 	location ~ \.php$ {
@@ -42,15 +43,25 @@ server {
 		
 		# Overwrite FastCGI Params here.
 		fastcgi_param SCRIPT_FILENAME	$document_root$fastcgi_script_name;
-		fastcgi_param SCRIPT_NAME		$fastcgi_script_name;
+		fastcgi_param SCRIPT_NAME	$fastcgi_script_name;
 		
 		# Include FastCGI Configs.
 		include /etc/nginx/conf.vhost/fastcgi.conf;
 
 		# Uncomment to Enable PHP FastCGI cache.
-		#include /etc/nginx/conf.vhost/fastcgi_cache.conf;
+		include /etc/nginx/conf.vhost/fastcgi_cache.conf;
+	
+		# Uncomment to enable Proxy Cache. Testing, not ready for production server!!!
+		#include /etc/nginx/conf.vhost/proxy_cache.conf;
 	}
 	
 	## Error page directives configuration.
 	#include /etc/nginx/conf.vhost/errorpage.conf;
 }
+
+# Redirect non-www access to www
+#server {
+#        listen          80;
+#        server_name     sample-site.com;
+#        return          301 http://www.$server_name$request_uri;
+#}
