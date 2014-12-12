@@ -8,7 +8,7 @@
 #	- ionCube Loader
 # Min requirement	: Ubuntu 14.04
 # Build Date		: 12/12/2014
-# Author			: MasEDI.Net (hi@masedi.net)
+# Author		: MasEDI.Net (hi@masedi.net)
 
 # Make sure only root can run this installer script
 if [ "$(id -u)" != "0" ]; then
@@ -34,7 +34,7 @@ echo "========================================================================="
 cur_dir=$(pwd)
 arch=$(uname -p)
 
-# Install pre-requirements 
+# Install pre-requirements
 apt-get update && apt-get install -y software-properties-common python-software-properties git
 
 # Add Nginx latest stable from PPA repo
@@ -71,7 +71,7 @@ date
 
 # Install Nginx - PHP5 - MariaDB - PhpMyAdmin
 apt-get autoremove -y
-#apt-get install -y nginx-full 
+#apt-get install -y nginx-full
 apt-get install -y nginx-custom
 apt-get install -y php5-fpm php5-cli php5-mysql php5-curl php5-geoip php5-gd php5-intl php5-mcrypt php5-memcache php5-imap php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl php-pear spawn-fcgi fcgiwrap openssl geoip-database snmp memcached
 apt-get install -y mariadb-server-10.0 mariadb-client-10.0 mariadb-server-core-10.0 mariadb-common mariadb-server libmariadbclient18 mariadb-client-core-10.0
