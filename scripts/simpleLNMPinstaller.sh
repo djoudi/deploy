@@ -178,6 +178,9 @@ sed -i "s/cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" /etc/php5/fpm/php.ini
 
 # Clone the deployment server config
 git clone https://github.com/joglomedia/deploy.git deploy
+# Fix file permission
+find deploy -type d -print0 | xargs -0 chmod 755
+find deploy -type f -print0 | xargs -0 chmod 644
 
 # Copy the optimized-version of php5-fpm config file
 mv /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.save
