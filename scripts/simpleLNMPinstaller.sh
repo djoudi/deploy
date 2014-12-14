@@ -212,7 +212,7 @@ cp -f deploy/nginx/sites-available/adminer.conf /etc/nginx/sites-available/
 cp -f deploy/nginx/sites-available/sample-wordpress.com.conf /etc/nginx/sites-available/
 cp -f deploy/nginx/sites-available/sample-wordpress-mu.com.conf /etc/nginx/sites-available/
 cp -f deploy/nginx/sites-available/ssl.sample-site.com.conf /etc/nginx/sites-available/
-ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/a
+ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/01-default
 # Restart Nginx server
 service nginx restart
 
