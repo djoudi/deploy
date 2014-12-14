@@ -134,10 +134,14 @@ tar zxf phpmemcachedadmin.tar.gz -C /usr/share/nginx/html/tools/phpMemcachedAdmi
 #rm -f phpmemcachedadmin.tar.gz
 
 # Install Adminer for Web-based MySQL Administration Tool
-wget http://downloads.sourceforge.net/adminer/adminer-4.1.0-en.php -O /usr/share/nginx/html/tools/adminer.php
+mkdir /usr/share/nginx/html/tools/adminer/
+wget http://downloads.sourceforge.net/adminer/adminer-4.1.0-en.php -O /usr/share/nginx/html/tools/adminer/index.php
 
 # Install PHP Info
-wget --no-check-certificate https://github.com/joglomedia/deploy/raw/master/scripts/phpinfo.php -O /usr/share/nginx/html/tools/phpinfo.php
+cat > /usr/share/nginx/html/tools/phpinfo.php <<EOL
+<?php phpinfo(); ?>
+EOL
+#wget --no-check-certificate https://github.com/joglomedia/deploy/raw/master/scripts/phpinfo.php -O /usr/share/nginx/html/tools/phpinfo.php
 
 ### Install Siege Benchmark ###
 #git clone https://github.com/JoeDog/siege.git
@@ -148,13 +152,26 @@ wget --no-check-certificate https://github.com/joglomedia/deploy/raw/master/scri
 
 ### Additional Settings ###
 
-# Memcache setting
+# Custom Memcache setting
 sed -i 's/-m 64/-m 128/g' /etc/memcached.conf
-cat >> /etc/php5/mods-available/memcache.ini <<EOL
+cat > /etc/php5/mods-available/memcache.ini <<EOL
+; uncomment the next line to enable the module
+extension=memcache.so
+
+[memcache]
+memcache.dbpath="/var/lib/memcache"
+memcache.maxreclevel=0
+memcache.maxfiles=0
+memcache.archivememlim=0
+memcache.maxfilesize=0
+memcache.maxratio=0
 ; custom setting for WordPress + W3TC
 session.save_handler = memcache
-session.save_path = "tcp://localhost:11211"
+session.save_path = "tcp://127.0.0.1:11211"
 EOL
+
+# Restart memcached daemon
+service memcached restart
 
 # Fix cgi.fix_pathinfo
 sed -i "s/cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" /etc/php5/fpm/php.ini
@@ -184,11 +201,15 @@ cp -f deploy/nginx/proxy_cache /etc/nginx/
 cp -f deploy/nginx/proxy_params /etc/nginx/
 cp -f deploy/nginx/upstream.conf /etc/nginx/
 cp -f deploy/nginx/conf.vhost /etc/nginx/
+cp -f deploy/nginx/ssl /etc/nginx/
 mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.save
 cp -f deploy/nginx/sites-available/default /etc/nginx/sites-available/
-cp -f deploy/nginx/sites-available/phpmyadmin /etc/nginx/sites-available/
-cp -f deploy/nginx/sites-available/sample-wordpress.site /etc/nginx/sites-available/
-
+cp -f deploy/nginx/sites-available/phpmyadmin.conf /etc/nginx/sites-available/
+cp -f deploy/nginx/sites-available/adminer.conf /etc/nginx/sites-available/
+cp -f deploy/nginx/sites-available/sample-wordpress.com.conf /etc/nginx/sites-available/
+cp -f deploy/nginx/sites-available/sample-wordpress-mu.com.conf /etc/nginx/sites-available/
+cp -f deploy/nginx/sites-available/ssl.sample-site.com.conf /etc/nginx/sites-available/
+ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/a
 # Restart Nginx server
 service nginx restart
 
