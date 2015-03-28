@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-# Phalcon PHP extension installer
+# Zephir installer
 # Min requirement	: GNU/Linux Ubuntu 14.04
-# Last Build		: 21/2/2015
+# Last Build		: 28/03/2015
 # Author			: MasEDI.Net (hi@masedi.net)
 
 # Make sure only root can run this installer script
@@ -12,9 +12,15 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # Prerequisite packages
-apt-get install php5-dev libpcre3-dev gcc make
+apt-get install re2c libpcre3-dev
 
-git clone http://github.com/phalcon/cphalcon.git
-git checkout 2.0.0
-cd cphalcon/build
+# install json-c
+./install-json
+
+# clon Zephir repo
+git clone https://github.com/phalcon/zephir.git
+
+# Install zephir
+cd zephir
+composer install
 ./install
