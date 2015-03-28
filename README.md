@@ -1,1 +1,1 @@
-Server deployment scripts
+Server deployment scripts for GNU/Linux Ubuntu.
