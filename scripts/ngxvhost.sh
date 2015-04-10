@@ -298,10 +298,13 @@ if [ "x$UserExists" = "x" ]; then
 fi
 
 # Additional check - is FPM user's pool already exist?
-if [ -f "/etc/php5/fpm/pool.d/$UserName.conf" ]; then
+if [ ! -f "/etc/php5/fpm/pool.d/$UserName.conf" ]; then
 	echo "The FPM pool configuration for user $UserName doesn't exist, attempting to add new pool configuration..."
 
-	create_fpm_pool_conf > /etc/php5/fpm/pool.d/{$UserName}.conf
+	create_fpm_pool_conf > /etc/php5/fpm/pool.d/${UserName}.conf
+
+	# Restart FPM
+	service php5-fpm restart
 fi
 
 # Additional Check - ensure that Nginx configuration meets the requirement
@@ -389,10 +392,8 @@ else
 	cd /etc/nginx/sites-enabled/
 	ln -s /etc/nginx/sites-available/${ServerName}.conf ${ServerName}.conf
 
-	# Reload PHP5-FPM
-	service php5-fpm reload
-
 	# Reload Nginx
+	echo "Reload Nginx configuration..."
 	service nginx reload #Optional implementation
 	
 	if [ "$Platform" = "wordpress-ms" ]; then
