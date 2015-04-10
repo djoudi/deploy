@@ -242,6 +242,10 @@ mysql_secure_installation
 # Restart MariaDB MySQL server
 service mysql restart
 
+# Install Nginx Vhost Creator
+cp -f deploy/scripts/ngxvhost.sh /usr/local/bin/ngxvhost
+chmod ugo+x /usr/local/bin/ngxvhost
+
 # Cleaning up all build dependencies hanging around on production server?
 #rm -fr deploy
 
