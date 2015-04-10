@@ -57,7 +57,13 @@ add-apt-repository ppa:ondrej/php5
 
 # Add MariaDB repo from MariaDB repo configuration tool
 apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
-echo "# MariaDB 10.0 repository list - created 2014-11-30 14:04 UTC\n# http://mariadb.org/mariadb/repositories/\ndeb http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu trusty main\ndeb-src http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu trusty main" > /etc/apt/sources.list.d/MariaDB.list
+touch /etc/apt/sources.list.d/MariaDB.list
+cat > /etc/apt/sources.list.d/MariaDB.list <<EOL
+# MariaDB 10.0 repository list - created 2014-11-30 14:04 UTC
+# http://mariadb.org/mariadb/repositories/
+deb http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu trusty main
+deb-src http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu trusty main
+EOL
 
 # Update repo/packages
 apt-get -y update
@@ -201,6 +207,7 @@ cp -f deploy/nginx/nginx.conf /etc/nginx/
 cp -f deploy/nginx/fastcgi_cache /etc/nginx/
 cp -f deploy/nginx/fastcgi_https_map /etc/nginx/
 cp -f deploy/nginx/fastcgi_params /etc/nginx/
+cp -f deploy/nginx/http_cloudflare_ips /etc/nginx/
 cp -f deploy/nginx/http_proxy_ips /etc/nginx/
 cp -f deploy/nginx/proxy_cache /etc/nginx/
 cp -f deploy/nginx/proxy_params /etc/nginx/
@@ -214,7 +221,11 @@ cp -f deploy/nginx/sites-available/adminer.conf /etc/nginx/sites-available/
 cp -f deploy/nginx/sites-available/sample-wordpress.com.conf /etc/nginx/sites-available/
 cp -f deploy/nginx/sites-available/sample-wordpress-mu.com.conf /etc/nginx/sites-available/
 cp -f deploy/nginx/sites-available/ssl.sample-site.com.conf /etc/nginx/sites-available/
+unlink /etc/nginx/sites-enabled/default
 ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/01-default
+mkdir /var/cache/nginx
+mkdir /var/cache/nginx/cgi-cache
+mkdir /var/cache/nginx/proxy-cache
 # Restart Nginx server
 service nginx restart
 
