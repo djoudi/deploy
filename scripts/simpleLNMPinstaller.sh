@@ -143,7 +143,7 @@ tar zxf phpmemcachedadmin.tar.gz -C /usr/share/nginx/html/tools/phpMemcachedAdmi
 
 # Install Adminer for Web-based MySQL Administration Tool
 mkdir /usr/share/nginx/html/tools/adminer/
-wget http://downloads.sourceforge.net/adminer/adminer-4.1.0-en.php -O /usr/share/nginx/html/tools/adminer/index.php
+wget http://sourceforge.net/projects/adminer/files/latest/download?source=files -O /usr/share/nginx/html/tools/adminer/index.php
 
 # Install PHP Info
 #wget --no-check-certificate https://github.com/joglomedia/deploy/raw/master/scripts/phpinfo.php -O /usr/share/nginx/html/tools/phpinfo.php
