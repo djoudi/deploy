@@ -47,6 +47,13 @@ sudo ngxvhost -u someone -s example.com -t default -d /home/user/Webs/example.co
 
 Note: Ngxvhost will automagically add new FPM user's pool config file if it doesn't exists.
 
+Web-based Administration
+=====
+You can access pre-installed web-based administration tools here
+```bash
+http://YOUR_IP_ADDRESS/tools/
+```
+
 Found bug? Have any suggestions?
 =====
 Please send your PR on the Github repository.
