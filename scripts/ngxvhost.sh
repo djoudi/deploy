@@ -225,6 +225,41 @@ cat <<- _EOF_
 _EOF_
 }
 
+function create_fpm_pool_conf {
+	cat <<- _EOF_
+	[$UserName]
+	user = $UserName
+	group = $UserName
+
+	listen = /var/run/php5-fpm.\$pool.sock
+	listen.owner = $UserName
+	listen.group = www-data
+	listen.mode = 0666
+	;listen.allowed_clients = 127.0.0.1
+
+	pm = dynamic
+	pm.max_children = 5
+	pm.start_servers = 1
+	pm.min_spare_servers = 1
+	pm.max_spare_servers = 3
+	pm.process_idle_timeout = 30s;
+	pm.max_requests = 500
+
+	slowlog = /var/log/php_slow.\$pool.log
+	request_slowlog_timeout = 1
+	 
+	chdir = /
+
+	security.limit_extensions = .php .php3 .php4 .php5
+	 
+	;php_admin_value[sendmail_path] = /usr/sbin/sendmail -t -i -f you@yourmail.com
+	php_flag[display_errors] = on
+	php_admin_value[error_log] = /var/log/php5-fpm.\$pool.log
+	php_admin_flag[log_errors] = on
+	;php_admin_value[memory_limit] = 32M
+	_EOF_
+}
+
 # Sanity Check - are there four arguments with 4 values?
 if [ $# -ne 8 ]; then
 	show_usage
@@ -260,6 +295,13 @@ if [ "x$UserExists" = "x" ]; then
 	echo "The user '$UserName' does not exist, please add new user first! Aborting..."
 	echo "ngxvhost -h for more helps"
 	exit 0;
+fi
+
+# Additional check - is FPM user's pool already exist?
+if [ -f "/etc/php5/fpm/pool.d/$UserName.conf" ]; then
+	echo "The FPM pool configuration for user $UserName doesn't exist, attempting to add new pool configuration..."
+
+	create_fpm_pool_conf > /etc/php5/fpm/pool.d/{$UserName}.conf
 fi
 
 # Additional Check - ensure that Nginx configuration meets the requirement
@@ -346,6 +388,10 @@ else
 	# Enable site
 	cd /etc/nginx/sites-enabled/
 	ln -s /etc/nginx/sites-available/${ServerName}.conf ${ServerName}.conf
+
+	# Reload PHP5-FPM
+	service php5-fpm reload
+
 	# Reload Nginx
 	service nginx reload #Optional implementation
 	
