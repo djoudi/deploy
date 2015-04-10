@@ -17,7 +17,7 @@
 #  +------------------------------------------------------------------------+
 
 # Version Control
-Versi='1.0.0-beta'
+Versi='1.1.0-beta'
 InstallDir=$(pwd)
 
 # May need to run this as sudo!
@@ -334,25 +334,23 @@ else
 
 			# TODO: Auto install Laravel framework skeleton
 		;;
+
 		phalcon)
 			# create vhost			
 			create_phalcon_vhost > /etc/nginx/sites-available/${ServerName}.conf
 
 			# TODO: Auto install Phalcon PHP framework skeleton
 		;;
-		wordpress-ms)
+
+		wordpress)
 			# check WordPress install
 			if [ ! -d "$DocumentRoot/wp-content/plugins" ]; then
 				echo ""
 				echo "Installing WordPress skeleton into document root..."
 				echo ""
 
-				wget http://wordpress.org/latest.zip -O wordpress.zip
-				unzip wordpress.zip
-				cp -r wordpress/* $DocumentRoot/
-
-				# remove trash
-				rm -fr wordpress*
+				# Clone new WordPress files
+				git clone https://github.com/WordPress/WordPress.git $DocumentRoot/
 			fi
 
 			# TODO: Pre-install nginx helper plugin
@@ -361,7 +359,35 @@ else
 				echo "Installing Nginx Helper plugin into WordPress install. Please activate after installation!"
 				echo ""
 
-				mkdir $DocumentRoot/wp-content/plugins/nginx-helper
+				wget --no-check-certificate https://downloads.wordpress.org/plugin/nginx-helper.1.8.4.zip -O nginx-helper.zip
+				unzip nginx-helper.zip
+				mv nginx-helper $DocumentRoot/wp-content/plugins/
+			fi
+
+			# create vhost
+			create_vhost >> /etc/nginx/sites-available/${ServerName}.conf
+		;;
+
+		wordpress-ms)
+			# check WordPress install
+			if [ ! -d "$DocumentRoot/wp-content/plugins" ]; then
+				echo ""
+				echo "Installing WordPress skeleton into document root..."
+				echo ""
+
+				# Clone new WordPress files
+				git clone https://github.com/WordPress/WordPress.git $DocumentRoot/
+			fi
+
+			# TODO: Pre-install nginx helper plugin
+			if [ ! -d "$DocumentRoot/wp-content/plugins/nginx-helper" ]; then
+				echo ""
+				echo "Installing Nginx Helper plugin into WordPress install. Please activate after installation!"
+				echo ""
+				
+				wget --no-check-certificate https://downloads.wordpress.org/plugin/nginx-helper.1.8.4.zip -O nginx-helper.zip
+				unzip nginx-helper.zip
+				mv nginx-helper $DocumentRoot/wp-content/plugins/
 
 				# Pre-populate blogid map, used by Nginx vhost conf
 				touch $DocumentRoot/wp-content/plugins/nginx-helper/map.conf
@@ -372,6 +398,7 @@ else
 			# create vhost
 			create_vhost >> /etc/nginx/sites-available/${ServerName}.conf
 		;;
+
 		*)
 			# create vhost			
 			create_vhost > /etc/nginx/sites-available/${ServerName}.conf

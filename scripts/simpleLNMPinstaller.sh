@@ -11,6 +11,7 @@
 # Min requirement	: GNU/Linux Ubuntu 14.04
 # Last Build		: 21/2/2015
 # Author			: MasEDI.Net (hi@masedi.net)
+# Version 			: 1.1.0
 
 # Make sure only root can run this installer script
 if [ "$(id -u)" != "0" ]; then
@@ -38,7 +39,7 @@ sleep 2
 arch=$(uname -p)
 
 # Install pre-requirements
-apt-get update && apt-get install -y software-properties-common python-software-properties git build-essential
+apt-get update && apt-get install -y software-properties-common python-software-properties git unzip build-essential
 
 # Add Nginx latest stable from PPA repo
 # Source: https://launchpad.net/~nginx/+archive/ubuntu/stable
