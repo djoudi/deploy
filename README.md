@@ -11,9 +11,9 @@ Features
 * MariaDB 10 (MySQL drop-in replacement)
 * PHP 5.x latest build
 * PHP5-FPM sets as user running the PHP script (pool)
-* Zend Opcache
+* Zend OPcache
 * Memcached 1.4
-* IonCube Loader
+* ionCube PHP Loader
 * Adminer (PhpMyAdmin replacement)
 
 Usage

@@ -96,7 +96,7 @@ else
 	tar xzf ioncube_loaders_lin_x86.tar.gz
 	#rm -f ioncube_loaders_lin_x86.tar.gz
 fi
-mv -r ioncube /usr/local
+mv ioncube /usr/local/
 
 # Enable ionCube Loader
 echo "zend_extension=/usr/local/ioncube/ioncube_loader_lin_5.5.so" > /etc/php5/mods-available/ioncube.ini
