@@ -362,7 +362,7 @@ else
 				echo "Installing Nginx Helper plugin into WordPress install. Please activate after installation!"
 				echo ""
 
-				wget --no-check-certificate https://downloads.wordpress.org/plugin/nginx-helper.1.8.4.zip -O nginx-helper.zip
+				wget --no-check-certificate https://downloads.wordpress.org/plugin/nginx-helper.1.8.7.zip -O nginx-helper.zip
 				unzip nginx-helper.zip
 				mv nginx-helper $DocumentRoot/wp-content/plugins/
 				rm -f nginx-helper.zip
