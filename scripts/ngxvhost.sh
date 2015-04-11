@@ -68,15 +68,16 @@ function create_vhost {
 cat <<- _EOF_
 server {
     listen 80;
+    #listen [::]:80 default_server ipv6only=on;
 
     ## Make site accessible from world web.
-    server_name $ServerName;
+    server_name $ServerName www.$ServerName;
 
     ## Log Settings.
     access_log /var/log/nginx/${ServerName}_access.log;
     error_log  /var/log/nginx/${ServerName}_error.log error;
 
-    charset utf-8;
+    #charset utf-8;
 
     ## Vhost root directory
     set \$root_path '$DocumentRoot';
@@ -109,7 +110,7 @@ server {
         #include /etc/nginx/conf.vhost/fastcgi_cache.conf;
 
         # FastCGI socket, change to fits your own socket!
-        fastcgi_pass unix:/var/run/php5-fpm.$UserName.sock;
+        fastcgi_pass unix:/var/run/php5-fpm.${UserName}.sock;
     }
 
     ## Uncomment to enable error page directives configuration.
@@ -128,15 +129,16 @@ function create_phalcon_vhost {
 cat <<- _EOF_
 server {
     listen 80;
+    #listen [::]:80 default_server ipv6only=on;
 
     ## Make site accessible from world web.
-    server_name $ServerName;
+    server_name $ServerName www.$ServerName;
 
     ## Log Settings.
     access_log /var/log/nginx/${ServerName}_access.log;
     error_log  /var/log/nginx/${ServerName}_error.log error;
 
-    charset utf-8;
+    #charset utf-8;
 
     ## Vhost root directory
     set \$root_path '${DocumentRoot}/public';
@@ -233,7 +235,7 @@ function create_fpm_pool_conf {
 
 	listen = /var/run/php5-fpm.\$pool.sock
 	listen.owner = $UserName
-	listen.group = www-data
+	listen.group = $UserName
 	listen.mode = 0666
 	;listen.allowed_clients = 127.0.0.1
 
@@ -245,7 +247,7 @@ function create_fpm_pool_conf {
 	pm.process_idle_timeout = 30s;
 	pm.max_requests = 500
 
-	slowlog = /var/log/php_slow.\$pool.log
+	slowlog = /var/log/php5-fpm_slow.\$pool.log
 	request_slowlog_timeout = 1
 	 
 	chdir = /
@@ -293,7 +295,7 @@ done
 UserExists=$(getent passwd $UserName)
 if [ "x$UserExists" = "x" ]; then
 	echo "The user '$UserName' does not exist, please add new user first! Aborting..."
-	echo "ngxvhost -h for more helps"
+	echo "Command: adduser UserName, try ngxvhost -h for more helps"
 	exit 0;
 fi
 
@@ -302,6 +304,7 @@ if [ ! -f "/etc/php5/fpm/pool.d/$UserName.conf" ]; then
 	echo "The FPM pool configuration for user $UserName doesn't exist, attempting to add new pool configuration..."
 
 	create_fpm_pool_conf > /etc/php5/fpm/pool.d/${UserName}.conf
+	touch /var/log/php5-fpm_slow.${UserName}.log
 
 	# Restart FPM
 	service php5-fpm restart
@@ -362,6 +365,7 @@ else
 				wget --no-check-certificate https://downloads.wordpress.org/plugin/nginx-helper.1.8.4.zip -O nginx-helper.zip
 				unzip nginx-helper.zip
 				mv nginx-helper $DocumentRoot/wp-content/plugins/
+				rm -f nginx-helper.zip
 			fi
 
 			# create vhost
@@ -388,6 +392,7 @@ else
 				wget --no-check-certificate https://downloads.wordpress.org/plugin/nginx-helper.1.8.4.zip -O nginx-helper.zip
 				unzip nginx-helper.zip
 				mv nginx-helper $DocumentRoot/wp-content/plugins/
+				rm -f nginx-helper.zip
 
 				# Pre-populate blogid map, used by Nginx vhost conf
 				touch $DocumentRoot/wp-content/plugins/nginx-helper/map.conf
@@ -409,9 +414,9 @@ else
 		;;	
 	esac
 
-	# Fix ownership
-	chown -R $UserName:$UserName $DocumentRoot/*
-	# Fix permission
+	# Fix docroot ownership
+	chown -R $UserName:$UserName $DocumentRoot
+	# Fix docroot permission
 	find $DocumentRoot -type d -print0 | xargs -0 chmod 755
 	find $DocumentRoot -type f -print0 | xargs -0 chmod 644
 

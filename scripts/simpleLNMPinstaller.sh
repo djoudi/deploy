@@ -37,6 +37,8 @@ sleep 2
 
 # Variables
 arch=$(uname -p)
+# Check server IP address
+IPAddr=$(curl -s http://ipecho.net/plain)
 
 # Install pre-requirements
 apt-get update && apt-get install -y software-properties-common python-software-properties git unzip build-essential
@@ -227,6 +229,10 @@ ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/01-default
 mkdir /var/cache/nginx
 mkdir /var/cache/nginx/cgi-cache
 mkdir /var/cache/nginx/proxy-cache
+
+# Make default server accessible from IP address
+sed -i "s/localhost.localdomain/$IPAddr/g" /etc/nginx/sites-available/default
+
 # Restart Nginx server
 service nginx restart
 
