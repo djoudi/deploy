@@ -359,7 +359,8 @@ else
 			# TODO: Pre-install nginx helper plugin
 			if [ ! -d "$DocumentRoot/wp-content/plugins/nginx-helper" ]; then
 				echo ""
-				echo "Installing Nginx Helper plugin into WordPress install. Please activate after installation!"
+				echo "Installing Nginx Helper plugin into WordPress install..."
+				echo "CAUTION! Please activate after WordPress installation."
 				echo ""
 
 				wget --no-check-certificate https://downloads.wordpress.org/plugin/nginx-helper.1.8.7.zip -O nginx-helper.zip
@@ -386,7 +387,8 @@ else
 			# TODO: Pre-install nginx helper plugin
 			if [ ! -d "$DocumentRoot/wp-content/plugins/nginx-helper" ]; then
 				echo ""
-				echo "Installing Nginx Helper plugin into WordPress install. Please activate after installation!"
+				echo "Installing Nginx Helper plugin into WordPress install..."
+				echo "CAUTION! Please activate after WordPress installation."
 				echo ""
 				
 				wget --no-check-certificate https://downloads.wordpress.org/plugin/nginx-helper.1.8.4.zip -O nginx-helper.zip

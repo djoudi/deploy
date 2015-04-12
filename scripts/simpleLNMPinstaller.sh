@@ -226,9 +226,7 @@ cp -f deploy/nginx/sites-available/sample-wordpress-mu.com.conf /etc/nginx/sites
 cp -f deploy/nginx/sites-available/ssl.sample-site.com.conf /etc/nginx/sites-available/
 unlink /etc/nginx/sites-enabled/default
 ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/01-default
-mkdir /var/cache/nginx
-mkdir /var/cache/nginx/cgi-cache
-mkdir /var/cache/nginx/proxy-cache
+mkdir /var/run/nginx-cache/
 
 # Make default server accessible from IP address
 sed -i "s/localhost.localdomain/$IPAddr/g" /etc/nginx/sites-available/default

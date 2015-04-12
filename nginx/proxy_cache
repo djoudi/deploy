@@ -1,7 +1,7 @@
 ## Include this file if you want to use Nginx as transparent proxy cache
 # Designed to be included in /etc/nginx/nginx.conf http{} block
 
-proxy_cache_path	/var/cache/nginx/proxy_cache levels=1:2 keys_zone=PROXYCACHE:4m max_size=50m inactive=120m; 
+proxy_cache_path	/var/run/nginx-cache/ levels=1:2 keys_zone=PROXYCACHE:4m max_size=50m inactive=120m; 
 # use stale cache on backend fault
 proxy_cache_use_stale	error timeout invalid_header updating http_500 http_502 http_503 http_504;
 
