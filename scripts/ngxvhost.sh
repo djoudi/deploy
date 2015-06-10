@@ -17,7 +17,7 @@
 #  +------------------------------------------------------------------------+
 
 # Version Control
-Versi='1.1.0-beta'
+Versi='1.1.2-beta'
 InstallDir=$(pwd)
 
 # May need to run this as sudo!
@@ -49,10 +49,10 @@ Usage: ngxvhost [OPTION]...
   -h    Help - Show this menu
   -s    ServerName - i.e. example.com or sub.example.com
   -t    Type of website (platform) - i.e. default. Supported platform: default, laravel, phalcon, wordpress, wordpress-ms
-  -u    UserName - i.e. someone. Use username added from adduser/useradd
+  -u    UserName - Use username added from adduser/useradd
 
 Example:
-ngxvhost -u someone -s example.com -t default -d /home/user/Webs/example.com
+ngxvhost -u username -s example.com -t default -d /home/username/Webs/example.com
 
 Mail bug reports and suggestions to <hi@masedi.net>.
 _EOF_
@@ -310,7 +310,7 @@ if [ ! -f "/etc/php5/fpm/pool.d/$UserName.conf" ]; then
 	service php5-fpm restart
 fi
 
-# Additional Check - ensure that Nginx configuration meets the requirement
+# Additional Check - ensure that Nginx's configuration meets the requirement
 if [ ! -d "/etc/nginx/sites-available" ]; then
 	echo "It seems that your Nginx installation doesn't meet ngxvhost requirement. Aborting..."
 	exit 0;
