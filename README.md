@@ -39,10 +39,10 @@ The Ngxvhost must be run as root (recommended using sudo).
 sudo ngxvhost -u username -s example.com -t default -d /home/username/Webs/example.com
 ```
 Ngxvhost Parameters:
--u your username
--s your site / domain name
--t site type, available options: wordpress, wordpress-ms, phalcon, laravel
--d path to your site directory containing the index file
+*-u your username
+*-s your site / domain name
+*-t site type, available options: wordpress, wordpress-ms, phalcon, laravel
+*-d path to your site directory containing the index file
 
 for more helps
 ```bash
