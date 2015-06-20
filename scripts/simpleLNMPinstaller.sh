@@ -221,9 +221,9 @@ mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.save
 cp -f deploy/nginx/sites-available/default /etc/nginx/sites-available/
 cp -f deploy/nginx/sites-available/phpmyadmin.conf /etc/nginx/sites-available/
 cp -f deploy/nginx/sites-available/adminer.conf /etc/nginx/sites-available/
-cp -f deploy/nginx/sites-available/sample-wordpress.com.conf /etc/nginx/sites-available/
-cp -f deploy/nginx/sites-available/sample-wordpress-mu.com.conf /etc/nginx/sites-available/
-cp -f deploy/nginx/sites-available/ssl.sample-site.com.conf /etc/nginx/sites-available/
+cp -f deploy/nginx/sites-available/sample-wordpress.dev.conf /etc/nginx/sites-available/
+cp -f deploy/nginx/sites-available/sample-wordpress-ms.dev.conf /etc/nginx/sites-available/
+cp -f deploy/nginx/sites-available/ssl.sample-site.dev.conf /etc/nginx/sites-available/
 unlink /etc/nginx/sites-enabled/default
 ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/01-default
 mkdir /var/run/nginx-cache/
@@ -239,8 +239,8 @@ service nginx restart
 # Fix MySQL error?
 # Ref: https://serverfault.com/questions/104014/innodb-error-log-file-ib-logfile0-is-of-different-size
 service mysql stop
-mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.save
-mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.save
+#mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.save
+#mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.save
 service mysql start
 
 # MySQL Secure Install
