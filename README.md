@@ -42,7 +42,7 @@ Ngxvhost Parameters:
 
 * -u your username
 * -s your site / domain name
-* -t site type, available options: wordpress, wordpress-ms, phalcon, laravel
+* -t site type, available options: default, wordpress, wordpress-ms, phalcon, laravel
 * -d path to your site directory containing the index file
 
 for more helps
