@@ -71,7 +71,7 @@ server {
     #listen [::]:80 default_server ipv6only=on;
 
     ## Make site accessible from world web.
-    server_name $ServerName www.$ServerName;
+    server_name $ServerName www.$ServerName *.$ServerName;
 
     ## Log Settings.
     access_log /var/log/nginx/${ServerName}_access.log;
@@ -196,7 +196,7 @@ cat <<- _EOF_
 # Wordpress Multisite Mapping for Nginx.
 map \$http_host \$blogid {
     default		0;
-    #include	${DocumentRoot}/wp-content/plugins/nginx-helper/map.conf;
+    #include	${DocumentRoot}/wp-content/uploads/nginx-helper/map.conf;
 }
 
 _EOF_
@@ -397,11 +397,13 @@ else
 				rm -f nginx-helper.zip
 
 				# Pre-populate blogid map, used by Nginx vhost conf
-				touch $DocumentRoot/wp-content/plugins/nginx-helper/map.conf
+				mkdir $DocumentRoot/wp-content/uploads/nginx-helper/
+				touch $DocumentRoot/wp-content/uploads/nginx-helper/map.conf
 			fi
 
 			# prepare vhost header specific to WordPress Multisite
 			prepare_wpms_vhost > /etc/nginx/sites-available/${ServerName}.conf
+
 			# create vhost
 			create_vhost >> /etc/nginx/sites-available/${ServerName}.conf
 		;;

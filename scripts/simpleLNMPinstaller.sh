@@ -73,7 +73,7 @@ apt-get -y update
 
 # Remove Apache2 & mysql if exist
 killall apache2 && killall mysql
-apt-get remove -y apache2 apache2-doc apache2-utils apache2.2-common apache2.2-bin apache2-mpm-prefork apache2-doc apache2-mpm-worker mysql-client mysql-server mysql-common php
+apt-get remove -y apache2 apache2-doc apache2-utils apache2.2-common apache2.2-bin apache2-mpm-prefork apache2-doc apache2-mpm-worker mysql-client mysql-server mysql-common
 
 # Update local time
 apt-get install -y ntpdate
@@ -85,7 +85,8 @@ apt-get install -y postfix
 # Install Nginx - PHP5 - MariaDB - PhpMyAdmin
 apt-get autoremove -y
 apt-get install -y nginx-custom
-apt-get install -y php5-fpm php5-cli php5-mysql php5-curl php5-geoip php5-gd php5-intl php5-mcrypt php5-memcached php5-memcache php5-imap php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl php-pear php5-dev spawn-fcgi fcgiwrap openssl geoip-database snmp memcached
+# removed php5-ming must be LTS
+apt-get install -y php5-fpm php5-cli php5-mysql php5-curl php5-geoip php5-gd php5-intl php5-mcrypt php5-memcached php5-memcache php5-imap php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl php-pear php5-dev spawn-fcgi fcgiwrap openssl geoip-database snmp memcached
 apt-get install -y mariadb-server-10.0 mariadb-client-10.0 mariadb-server-core-10.0 mariadb-common mariadb-server libmariadbclient18 mariadb-client-core-10.0
 #apt-get install -y phpmyadmin
 
