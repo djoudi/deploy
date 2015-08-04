@@ -121,6 +121,71 @@ server {
 _EOF_
 }
 
+
+#
+# Output Laravel vHost skeleton, fill with userinput
+# To be outputted into new file
+#
+function create_laravel_vhost {
+cat <<- _EOF_
+server {
+    listen 80;
+    #listen [::]:80 default_server ipv6only=on;
+
+    ## Make site accessible from world web.
+    server_name $ServerName www.$ServerName;
+
+    ## Log Settings.
+    access_log /var/log/nginx/${ServerName}_access.log;
+    error_log  /var/log/nginx/${ServerName}_error.log error;
+
+    #charset utf-8;
+
+    ## Vhost root directory
+    set \$root_path '${DocumentRoot}';
+    root \$root_path;
+    index index.php index.html index.htm;
+
+    ## Global directives configuration.
+    include /etc/nginx/conf.vhost/block.conf;
+    include /etc/nginx/conf.vhost/staticfiles.conf;
+    include /etc/nginx/conf.vhost/restrictions.conf;
+
+    ## Default vhost directives configuration, use only one config.
+    include /etc/nginx/conf.vhost/site_${Platform}.conf;
+
+    ## pass the PHP scripts to php5-fpm
+    location ~ \.php$ {
+        fastcgi_index index.php;
+
+        fastcgi_split_path_info		^(.+\.php)(/.+)$;
+
+        # Include FastCGI Params.
+        include /etc/nginx/fastcgi_params;
+
+        # Overwrite FastCGI Params here.
+        #fastcgi_param PATH_INFO			\$fastcgi_path_info;
+        fastcgi_param SCRIPT_FILENAME	\$document_root\$fastcgi_script_name;
+        #fastcgi_param SCRIPT_NAME		\$fastcgi_script_name;
+
+        # Include FastCGI Configs.
+        include /etc/nginx/conf.vhost/fastcgi.conf;
+
+        # Uncomment to Enable PHP FastCGI cache.
+        #include /etc/nginx/conf.vhost/fastcgi_cache.conf;
+
+        # FastCGI socket, change to fits your own socket!
+        fastcgi_pass unix:/var/run/php5-fpm.${UserName}.sock;
+    }
+
+    ## Uncomment to enable error page directives configuration.
+    #include /etc/nginx/conf.vhost/errorpage.conf;
+
+    ## Add your custom site directives here.
+}
+_EOF_
+}
+
 #
 # Output PhalconPHP vHost skeleton, fill with userinput
 # To be outputted into new file
@@ -293,18 +358,18 @@ done
 
 # Additional Check - are user already exist?
 UserExists=$(getent passwd $UserName)
-if [ "x$UserExists" = "x" ]; then
+if [ "x${UserExists}" = "x" ]; then
 	echo "The user '$UserName' does not exist, please add new user first! Aborting..."
 	echo "Command: adduser UserName, try ngxvhost -h for more helps"
 	exit 0;
 fi
 
 # Additional check - is FPM user's pool already exist?
-if [ ! -f "/etc/php5/fpm/pool.d/$UserName.conf" ]; then
-	echo "The FPM pool configuration for user $UserName doesn't exist, attempting to add new pool configuration..."
+if [ ! -f "/etc/php5/fpm/pool.d/${UserName}.conf" ]; then
+	echo "The FPM pool configuration for user ${UserName} doesn't exist, attempting to add new pool configuration..."
 
-	create_fpm_pool_conf > /etc/php5/fpm/pool.d/${UserName}.conf
-	touch /var/log/php5-fpm_slow.${UserName}.log
+	create_fpm_pool_conf > /etc/php5/fpm/pool.d/$UserName.conf
+	touch /var/log/php5-fpm_slow.$UserName.log
 
 	# Restart FPM
 	service php5-fpm restart
@@ -317,8 +382,8 @@ if [ ! -d "/etc/nginx/sites-available" ]; then
 fi
 
 # Check if vhost already exists.
-if [ -f "/etc/nginx/sites-available/$ServerName.conf" ]; then
-	echo "vHost config for $ServerName already exists. Aborting..."
+if [ -f "/etc/nginx/sites-available/${ServerName}.conf" ]; then
+	echo "vHost config for ${ServerName} already exists. Aborting..."
 	show_usage
 else
 	# Creates document root
@@ -333,9 +398,17 @@ else
 	case $Platform in
 		laravel)
 			# create vhost			
-			create_phalcon_vhost > /etc/nginx/sites-available/${ServerName}.conf
+			create_laravel_vhost > /etc/nginx/sites-available/${ServerName}.conf
 
 			# TODO: Auto install Laravel framework skeleton
+			if [ ! -f "${DocumentRoot}/server.php" ]; then
+				echo ""
+				echo "Copying Laravel skeleton into document root..."
+				echo ""
+
+				# Clone new WordPress files
+				git clone https://github.com/laravel/laravel.git $DocumentRoot/	
+			fi
 		;;
 
 		phalcon)
@@ -347,9 +420,9 @@ else
 
 		wordpress)
 			# check WordPress install
-			if [ ! -d "$DocumentRoot/wp-content/plugins" ]; then
+			if [ ! -d "${DocumentRoot}/wp-content/plugins" ]; then
 				echo ""
-				echo "Installing WordPress skeleton into document root..."
+				echo "Copying WordPress skeleton into document root..."
 				echo ""
 
 				# Clone new WordPress files
@@ -357,25 +430,26 @@ else
 			fi
 
 			# TODO: Pre-install nginx helper plugin
-			if [ ! -d "$DocumentRoot/wp-content/plugins/nginx-helper" ]; then
+			if [ ! -d "${DocumentRoot}/wp-content/plugins/nginx-helper" ]; then
 				echo ""
-				echo "Installing Nginx Helper plugin into WordPress install..."
+				echo "Copying Nginx Helper plugin into WordPress install..."
 				echo "CAUTION! Please activate after WordPress installation."
 				echo ""
 
-				wget --no-check-certificate https://downloads.wordpress.org/plugin/nginx-helper.1.8.7.zip -O nginx-helper.zip
-				unzip nginx-helper.zip
-				mv nginx-helper $DocumentRoot/wp-content/plugins/
-				rm -f nginx-helper.zip
+				#wget --no-check-certificate https://downloads.wordpress.org/plugin/nginx-helper.1.8.7.zip -O nginx-helper.zip
+				#unzip nginx-helper.zip
+				#mv nginx-helper $DocumentRoot/wp-content/plugins/
+				#rm -f nginx-helper.zip
+				git clone https://github.com/rtCamp/nginx-helper.git $DocumentRoot/wp-content/plugins/nginx-helper
 			fi
 
 			# create vhost
-			create_vhost >> /etc/nginx/sites-available/${ServerName}.conf
+			create_vhost >> /etc/nginx/sites-available/$ServerName.conf
 		;;
 
 		wordpress-ms)
 			# check WordPress install
-			if [ ! -d "$DocumentRoot/wp-content/plugins" ]; then
+			if [ ! -d "${DocumentRoot}/wp-content/plugins" ]; then
 				echo ""
 				echo "Installing WordPress skeleton into document root..."
 				echo ""
@@ -385,16 +459,17 @@ else
 			fi
 
 			# TODO: Pre-install nginx helper plugin
-			if [ ! -d "$DocumentRoot/wp-content/plugins/nginx-helper" ]; then
+			if [ ! -d "${DocumentRoot}/wp-content/plugins/nginx-helper" ]; then
 				echo ""
-				echo "Installing Nginx Helper plugin into WordPress install..."
+				echo "Copying Nginx Helper plugin into WordPress install..."
 				echo "CAUTION! Please activate after WordPress installation."
 				echo ""
-				
-				wget --no-check-certificate https://downloads.wordpress.org/plugin/nginx-helper.1.8.4.zip -O nginx-helper.zip
-				unzip nginx-helper.zip
-				mv nginx-helper $DocumentRoot/wp-content/plugins/
-				rm -f nginx-helper.zip
+
+				#wget --no-check-certificate https://downloads.wordpress.org/plugin/nginx-helper.1.8.7.zip -O nginx-helper.zip
+				#unzip nginx-helper.zip
+				#mv nginx-helper $DocumentRoot/wp-content/plugins/
+				#rm -f nginx-helper.zip
+				git clone https://github.com/rtCamp/nginx-helper.git $DocumentRoot/wp-content/plugins/nginx-helper
 
 				# Pre-populate blogid map, used by Nginx vhost conf
 				mkdir $DocumentRoot/wp-content/uploads/nginx-helper/
@@ -402,19 +477,19 @@ else
 			fi
 
 			# prepare vhost header specific to WordPress Multisite
-			prepare_wpms_vhost > /etc/nginx/sites-available/${ServerName}.conf
+			prepare_wpms_vhost > /etc/nginx/sites-available/$ServerName.conf
 
 			# create vhost
-			create_vhost >> /etc/nginx/sites-available/${ServerName}.conf
+			create_vhost >> /etc/nginx/sites-available/$ServerName.conf
 		;;
 
 		*)
 			# create vhost			
-			create_vhost > /etc/nginx/sites-available/${ServerName}.conf
+			create_vhost > /etc/nginx/sites-available/$ServerName.conf
 
 			# create default index file
-			create_indexfile >> ${DocumentRoot}/index.html
-			chown $UserName:$UserName ${DocumentRoot}/index.html
+			create_indexfile >> $DocumentRoot/index.html
+			chown $UserName:$UserName $DocumentRoot/index.html
 		;;	
 	esac
 
@@ -426,13 +501,13 @@ else
 
 	# Enable site
 	cd /etc/nginx/sites-enabled/
-	ln -s /etc/nginx/sites-available/${ServerName}.conf ${ServerName}.conf
+	ln -s /etc/nginx/sites-available/$ServerName.conf $ServerName.conf
 
 	# Reload Nginx
 	echo "Reload Nginx configuration..."
 	service nginx reload #Optional implementation
 	
-	if [ "$Platform" = "wordpress-ms" ]; then
+	if [ "${Platform}" = "wordpress-ms" ]; then
 		echo ""
 		echo "Note: You're installing Wordpress Multisite, please activate Nginx Helper plugin to work properly."
 		echo ""
