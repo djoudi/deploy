@@ -72,6 +72,53 @@ server {
 	}
 }
 
+### Database Administration
+server {
+	listen   8082; ## listen for ipv4; this line is default and implied
+	#listen   [::]:80 default ipv6only=on; ## listen for ipv6
+
+	# Make site accessible from http://localhost/
+	server_name localhost.localdomain;
+
+	root /usr/share/nginx/html/tools;
+	index index.php index.html index.htm;
+	
+	# Log Settings.
+	access_log   /var/log/nginx/localhost.access.log;
+	error_log    /var/log/nginx/localhost.error.log;
+
+	location / {
+		# First attempt to serve request as file, then
+		# as directory, then fall back to index.html
+		try_files $uri $uri/ /index.html;
+
+		# Uncomment to enable naxsi on this location
+		# include /etc/nginx/naxsi.rules
+
+		# Uncomment to enable auto index
+		autoindex on;
+	}
+
+	# pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+	#
+	location ~ \.php$ {
+	#	# NOTE: You should have "cgi.fix_pathinfo = 0;" in php.ini
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+
+	#	# With php5-fpm:
+		fastcgi_pass unix:/var/run/php5-fpm.sock;
+		fastcgi_index index.php;
+		include /etc/nginx/fastcgi_params;
+	}
+
+	# deny access to .htaccess files, if Apache's document root
+	# concurs with nginx's one
+	#
+	location ~ /\.ht {
+		deny all;
+	}
+}
+
 
 # another virtual host using mix of IP-, name-, and port-based configuration
 #
