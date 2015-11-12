@@ -64,8 +64,8 @@ touch /etc/apt/sources.list.d/MariaDB.list
 cat > /etc/apt/sources.list.d/MariaDB.list <<EOL
 # MariaDB 10.0 repository list - created 2014-11-30 14:04 UTC
 # http://mariadb.org/mariadb/repositories/
-deb http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu trusty main
-deb-src http://ftp.osuosl.org/pub/mariadb/repo/10.0/ubuntu trusty main
+deb [arch=amd64,i386] http://ftp.osuosl.org/pub/mariadb/repo/10.1/ubuntu trusty main
+deb-src http://ftp.osuosl.org/pub/mariadb/repo/10.1/ubuntu trusty main
 EOL
 
 # Update repo/packages
@@ -178,8 +178,8 @@ memcache.archivememlim=0
 memcache.maxfilesize=0
 memcache.maxratio=0
 ; custom setting for WordPress + W3TC
-session.save_handler = memcache
-session.save_path = "tcp://127.0.0.1:11211"
+session.bak_handler = memcache
+session.bak_path = "tcp://127.0.0.1:11211"
 EOL
 
 # Restart memcached daemon
@@ -195,18 +195,18 @@ find deploy -type d -print0 | xargs -0 chmod 755
 find deploy -type f -print0 | xargs -0 chmod 644
 
 # Copy the optimized-version of php5-fpm config file
-mv /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.save
+mv /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.bak
 cp deploy/php5/fpm/php-fpm.conf /etc/php5/fpm/
 
 # Copy the optimized-version of php5-fpm default pool
-mv /etc/php5/fpm/pool.d/www.conf /etc/php5/fpm/pool.d/www.conf.save
+mv /etc/php5/fpm/pool.d/www.conf /etc/php5/fpm/pool.d/www.conf.bak
 cp deploy/php5/fpm/pool.d/www.conf /etc/php5/fpm/pool.d/
 
 # Restart Php5-fpm server
 service php5-fpm restart
 
 # Copy custom Nginx Config
-mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.save
+mv /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 cp -f deploy/nginx/nginx.conf /etc/nginx/
 cp -f deploy/nginx/fastcgi_cache /etc/nginx/
 cp -f deploy/nginx/fastcgi_https_map /etc/nginx/
@@ -218,7 +218,7 @@ cp -f deploy/nginx/proxy_params /etc/nginx/
 cp -f deploy/nginx/upstream.conf /etc/nginx/
 cp -fr deploy/nginx/conf.vhost /etc/nginx/
 cp -fr deploy/nginx/ssl /etc/nginx/
-mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.save
+mv /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
 cp -f deploy/nginx/sites-available/default /etc/nginx/sites-available/
 cp -f deploy/nginx/sites-available/phpmyadmin.conf /etc/nginx/sites-available/
 cp -f deploy/nginx/sites-available/adminer.conf /etc/nginx/sites-available/
@@ -240,8 +240,8 @@ service nginx restart
 # Fix MySQL error?
 # Ref: https://serverfault.com/questions/104014/innodb-error-log-file-ib-logfile0-is-of-different-size
 service mysql stop
-#mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.save
-#mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.save
+#mv /var/lib/mysql/ib_logfile0 /var/lib/mysql/ib_logfile0.bak
+#mv /var/lib/mysql/ib_logfile1 /var/lib/mysql/ib_logfile1.bak
 service mysql start
 
 # MySQL Secure Install

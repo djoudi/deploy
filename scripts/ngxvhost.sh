@@ -121,7 +121,6 @@ server {
 _EOF_
 }
 
-
 #
 # Output Laravel vHost skeleton, fill with userinput
 # To be outputted into new file
@@ -403,11 +402,13 @@ else
 			# TODO: Auto install Laravel framework skeleton
 			if [ ! -f "${DocumentRoot}/server.php" ]; then
 				echo ""
-				echo "Copying Laravel skeleton into document root..."
-				echo ""
+				echo -n "Should we copy Laravel skeleton into document root? (y/n): "
+				read instal
 
-				# Clone new WordPress files
-				git clone https://github.com/laravel/laravel.git $DocumentRoot/	
+				# Clone new Laravel files
+				if [[ "${instal}" = "y" || "${instal}" = "yes" ]]; then
+					git clone https://github.com/laravel/laravel.git $DocumentRoot/
+				fi
 			fi
 		;;
 
@@ -422,18 +423,20 @@ else
 			# check WordPress install
 			if [ ! -d "${DocumentRoot}/wp-content/plugins" ]; then
 				echo ""
-				echo "Copying WordPress skeleton into document root..."
-				echo ""
+				echo -n "Should we copy WordPress skeleton into document root? (y/n): "
+				read instal
 
 				# Clone new WordPress files
-				git clone https://github.com/WordPress/WordPress.git $DocumentRoot/
+				if [[ "${instal}" = "y" || "${instal}" = "yes" ]]; then
+					git clone https://github.com/WordPress/WordPress.git $DocumentRoot/
+				fi
 			fi
 
 			# TODO: Pre-install nginx helper plugin
-			if [ ! -d "${DocumentRoot}/wp-content/plugins/nginx-helper" ]; then
+			if [[ -d "${DocumentRoot}/wp-content/plugins" && ! -d "${DocumentRoot}/wp-content/plugins/nginx-helper" ]]; then
 				echo ""
 				echo "Copying Nginx Helper plugin into WordPress install..."
-				echo "CAUTION! Please activate after WordPress installation."
+				echo "CAUTION! Please activate the plugin after WordPress installation."
 				echo ""
 
 				#wget --no-check-certificate https://downloads.wordpress.org/plugin/nginx-helper.1.8.7.zip -O nginx-helper.zip
@@ -451,15 +454,17 @@ else
 			# check WordPress install
 			if [ ! -d "${DocumentRoot}/wp-content/plugins" ]; then
 				echo ""
-				echo "Installing WordPress skeleton into document root..."
-				echo ""
+				echo -n "Should we copy WordPress skeleton into document root? (y/n): "
+				read instal
 
 				# Clone new WordPress files
-				git clone https://github.com/WordPress/WordPress.git $DocumentRoot/
+				if [[ "${instal}" = "y" || "${instal}" = "yes" ]]; then
+					git clone https://github.com/WordPress/WordPress.git $DocumentRoot/
+				fi
 			fi
 
 			# TODO: Pre-install nginx helper plugin
-			if [ ! -d "${DocumentRoot}/wp-content/plugins/nginx-helper" ]; then
+			if [[ -d "${DocumentRoot}/wp-content/plugins" && ! -d "${DocumentRoot}/wp-content/plugins/nginx-helper" ]]; then
 				echo ""
 				echo "Copying Nginx Helper plugin into WordPress install..."
 				echo "CAUTION! Please activate after WordPress installation."

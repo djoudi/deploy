@@ -14,13 +14,13 @@ fi
 # Prerequisite packages
 apt-get install re2c libpcre3-dev
 
-# install json-c
-./install-json
-
 # clon Zephir repo
 git clone https://github.com/phalcon/zephir.git
 
 # Install zephir
 cd zephir
+# install json-c
+./install-json
+# install zephir
 composer install
 ./install
