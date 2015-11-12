@@ -46,7 +46,15 @@ else
 	sethomedir="-d /home/${namauser} -M"
 fi
 
-useradd $sethomedir $setexpiredate -g users -s $setusershell $namauser
+echo -n "Set users group? (y/n): "
+read setgroup
+if [ "${setgroup}" = "y" ]; then
+	$setgroup = "-g users"
+else
+	$setgroup = ""
+fi
+
+useradd $sethomedir $setexpiredate $setgroup -s $setusershell $namauser
 echo "${namauser}:${katasandi}" | chpasswd
 
 clear
