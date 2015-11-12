@@ -45,8 +45,7 @@ apt-get autoremove -y
 
 # Install pre-requirements
 apt-get update
-apt-get install -y software-properties-common python-software-properties build-essential
-apt-get install -y git unzip curl openssl
+apt-get install -y software-properties-common python-software-properties build-essential git unzip curl openssl
 
 # Add Nginx latest stable from PPA repo
 # Source: https://launchpad.net/~nginx/+archive/ubuntu/stable
