@@ -46,7 +46,7 @@ apt-get autoremove -y
 # Install pre-requirements
 apt-get update
 apt-get install -y software-properties-common python-software-properties build-essential
-apt-get install -y git unzip curl
+apt-get install -y git unzip curl openssl
 
 # Add Nginx latest stable from PPA repo
 # Source: https://launchpad.net/~nginx/+archive/ubuntu/stable
@@ -88,7 +88,7 @@ apt-get install -y nginx-custom
 # Install Php5 +FPM
 apt-get install -y snmp
 # removed php5-ming must be LTS
-apt-get install -y php5-fpm php5-cli php5-mysql php5-curl php5-geoip php5-gd php5-intl php5-mcrypt php5-memcached php5-memcache php5-imap php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl php-pear php5-dev spawn-fcgi fcgiwrap openssl geoip-database
+apt-get install -y php5-fpm php5-cli php5-mysql php5-curl php5-geoip php5-gd php5-intl php5-mcrypt php5-memcached php5-memcache php5-imap php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl php-pear php5-dev spawn-fcgi fcgiwrap geoip-database
 # Install MariaDB
 apt-get install -y mariadb-server-10.1 mariadb-client-10.1 mariadb-server-core-10.1 mariadb-common mariadb-server libmariadbclient18 mariadb-client-core-10.1
 # Install memcached
