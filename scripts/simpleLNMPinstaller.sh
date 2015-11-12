@@ -9,9 +9,9 @@
 #	- ionCube Loader
 #	- Adminer (PhpMyAdmin replacement)
 # Min requirement	: GNU/Linux Ubuntu 14.04
-# Last Build		: 21/2/2015
+# Last Build		: 13/11/2015
 # Author			: MasEDI.Net (hi@masedi.net)
-# Version 			: 1.1.0
+# Version 			: 1.1.1
 
 # Make sure only root can run this installer script
 if [ "$(id -u)" != "0" ]; then
@@ -26,17 +26,22 @@ if [ ! -f "/etc/lsb-release" ]; then
 fi
 
 clear
-echo "========================================================================="
-echo "SimpleLNMPIntaller v 1.0.0-beta for Ubuntu VPS,  Written by MasEDI.Net "
-echo "========================================================================="
-echo "A small tool to install Nginx + MariaDB (MySQL) + PHP on Linux "
-echo ""
-echo "For more information please visit http://masedi.net/tools/"
-echo "========================================================================="
+echo "#========================================================================#"
+echo "# SimpleLNMPIntaller v 1.0.0-beta for Ubuntu VPS,  Written by MasEDI.Net #"
+echo "#========================================================================#"
+echo "# A small tool to install Nginx + MariaDB (MySQL) + PHP on Linux         #"
+echo "#                                                                        #"
+echo "# For more information please visit http://masedi.net/tools/             #"
+echo "#========================================================================#"
 sleep 2
 
 # Variables
 arch=$(uname -p)
+
+# Remove Apache2 & mysql if exist
+killall apache2 && killall mysql
+apt-get remove -y apache2 apache2-doc apache2-utils apache2.2-common apache2.2-bin apache2-mpm-prefork apache2-doc apache2-mpm-worker mysql-client mysql-server mysql-common
+apt-get autoremove -y
 
 # Install pre-requirements
 apt-get update
@@ -71,10 +76,6 @@ EOL
 # Update repo/packages
 apt-get -y update
 
-# Remove Apache2 & mysql if exist
-killall apache2 && killall mysql
-apt-get remove -y apache2 apache2-doc apache2-utils apache2.2-common apache2.2-bin apache2-mpm-prefork apache2-doc apache2-mpm-worker mysql-client mysql-server mysql-common
-
 # Update local time
 apt-get install -y ntpdate
 ntpdate -d cn.pool.ntp.org
@@ -83,27 +84,30 @@ ntpdate -d cn.pool.ntp.org
 apt-get install -y postfix
 
 # Install Nginx - PHP5 - MariaDB - PhpMyAdmin
-apt-get autoremove -y
 apt-get install -y nginx-custom
+# Install Php5 +FPM
+apt-get install -y snmp
 # removed php5-ming must be LTS
-apt-get install -y php5-fpm php5-cli php5-mysql php5-curl php5-geoip php5-gd php5-intl php5-mcrypt php5-memcached php5-memcache php5-imap php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl php-pear php5-dev spawn-fcgi fcgiwrap openssl geoip-database snmp memcached
+apt-get install -y php5-fpm php5-cli php5-mysql php5-curl php5-geoip php5-gd php5-intl php5-mcrypt php5-memcached php5-memcache php5-imap php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl php-pear php5-dev spawn-fcgi fcgiwrap openssl geoip-database
+# Install MariaDB
 apt-get install -y mariadb-server-10.1 mariadb-client-10.1 mariadb-server-core-10.1 mariadb-common mariadb-server libmariadbclient18 mariadb-client-core-10.1
-#apt-get install -y phpmyadmin
+# Install memcached
+apt-get install -y memcached
 
 ### Install ionCube Loader ###
 if [ "$arch" = "x86_64" ]; then
 	wget "http://downloads2.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz"
 	tar xzf ioncube_loaders_lin_x86-64.tar.gz
-	#rm -f ioncube_loaders_lin_x86-64.tar.gz
+	rm -f ioncube_loaders_lin_x86-64.tar.gz
 else
 	wget "http://downloads2.ioncube.com/loader_downloads/ioncube_loaders_lin_x86.tar.gz"
 	tar xzf ioncube_loaders_lin_x86.tar.gz
-	#rm -f ioncube_loaders_lin_x86.tar.gz
+	rm -f ioncube_loaders_lin_x86.tar.gz
 fi
-mv ioncube /usr/local/
+mv ioncube /usr/lib/
 
 # Enable ionCube Loader
-echo "zend_extension=/usr/local/ioncube/ioncube_loader_lin_5.5.so" > /etc/php5/mods-available/ioncube.ini
+echo "zend_extension=/usr/lib/ioncube/ioncube_loader_lin_5.5.so" > /etc/php5/mods-available/ioncube.ini
 ln -s /etc/php5/mods-available/ioncube.ini /etc/php5/fpm/conf.d/05-ioncube.ini
 ln -s /etc/php5/mods-available/ioncube.ini /etc/php5/cli/conf.d/05-ioncube.ini
 
@@ -140,17 +144,14 @@ mkdir /usr/share/nginx/html/tools/
 wget --no-check-certificate https://raw.github.com/rlerdorf/opcache-status/master/opcache.php -O /usr/share/nginx/html/tools/opcache.php
 
 # Install Memcache Web-based stats
-mkdir /usr/share/nginx/html/tools/phpMemcachedAdmin
-wget http://phpmemcacheadmin.googlecode.com/files/phpMemcachedAdmin-1.2.2-r262.tar.gz -O phpmemcachedadmin.tar.gz
-tar zxf phpmemcachedadmin.tar.gz -C /usr/share/nginx/html/tools/phpMemcachedAdmin/
-#rm -f phpmemcachedadmin.tar.gz
+#http://blog.elijaa.org/index.php?pages/phpMemcachedAdmin-Installation-Guide
+git clone https://github.com/Meabed/phpMemcachedAdmin.git /usr/share/nginx/html/tools/phpMemcachedAdmin/
 
 # Install Adminer for Web-based MySQL Administration Tool
 mkdir /usr/share/nginx/html/tools/adminer/
 wget http://sourceforge.net/projects/adminer/files/latest/download?source=files -O /usr/share/nginx/html/tools/adminer/index.php
 
 # Install PHP Info
-#wget --no-check-certificate https://github.com/joglomedia/deploy/raw/master/scripts/phpinfo.php -O /usr/share/nginx/html/tools/phpinfo.php
 cat > /usr/share/nginx/html/tools/phpinfo.php <<EOL
 <?php phpinfo(); ?>
 EOL
@@ -258,11 +259,11 @@ chmod ugo+x /usr/local/bin/ngxvhost
 #rm -fr deploy
 
 clear
-echo "========================================================================="
-echo "Thanks for installing LNMP stack using SimpleLNMPInstaller..."
-echo "Found any bugs / errors / suggestions? please let me know...."
-echo "If this script useful, don't forget to buy me a coffee or milk... :D"
-echo "My PayPal is always open for donation, send your tips here hi@masedi.net"
-echo ""
-echo "(c) 2015 - MasEDI.Net - http://masedi.net ;)"
-echo "========================================================================="
+echo "#==========================================================================#"
+echo "# Thanks for installing LNMP stack using SimpleLNMPInstaller...            #"
+echo "# Found any bugs / errors / suggestions? please let me know....            #"
+echo "# If this script useful, don't forget to buy me a coffee or milk... :D     #"
+echo "# My PayPal is always open for donation, send your tips here hi@masedi.net #"
+echo "#                                                                          #"
+echo "# (c) 2015 - MasEDI.Net - http://masedi.net ;)                             #"
+echo "===========================================================================#"
