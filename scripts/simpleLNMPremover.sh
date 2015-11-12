@@ -16,6 +16,8 @@ if [ "$(id -u)" != "0" ]; then
 	exit 1
 fi
 
+clear
+
 # Variables
 arch=$(uname -p)
 
@@ -34,6 +36,7 @@ service memcached stop
 # Remove Nginx - PHP5 - MariaDB - PhpMyAdmin
 apt-get remove -y nginx-custom
 
+echo ""
 echo -n "Completely remove Nginx configuration files (This action is not reversible)? (y/n): "
 read rmngxconf
 if [ "${rmngxconf}" = "y" ]; then
@@ -49,6 +52,7 @@ fi
 apt-get remove -y php-pear php5-fpm php5-cli php5-mysql php5-curl php5-geoip php5-gd php5-intl php5-mcrypt php5-memcache php5-imap php5-ming php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl spawn-fcgi openssl geoip-database snmp memcached
 apt-get -y remove php*
 
+echo ""
 echo -n "Completely remove PHP-FPM configuration files (This action is not reversible)? (y/n): "
 read rmfpmconf
 if [ "${rmfpmconf}" = "y" ]; then
@@ -59,6 +63,7 @@ fi
 
 apt-get remove -y mariadb-server-10.1 mariadb-client-10.1 mariadb-server-core-10.1 mariadb-common mariadb-server libmariadbclient18 mariadb-client-core-10.1
 
+echo ""
 echo -n "Completely remove MariaDB SQL database and configuration files (This action is not reversible)? (y/n): "
 read rmsqlconf
 if [ "${rmsqlconf}" = "y" ]; then
@@ -76,9 +81,11 @@ rm -fr /usr/local/ioncube
 
 
 clear
-
-echo "Thanks for trying LNMP stack using SimpleLNMPInstaller... We sad to see you go ;("
-echo "Found any bugs / errors / suggestions? please let me know...."
-echo "If you think this script is useful, don't forget to buy me a coffee or milk... My PayPal is always open for donation :D send your tips here hi@masedi.net"
-echo ""
-echo "Thankz & Greetz: MasEDI - http://masedi.net ;)"
+echo "#==========================================================================#"
+echo "# Thanks for trying SimpleLNMPInstaller... Sad to see you Go ;(            #"
+echo "# Found any bugs / errors / suggestions? please let me know....            #"
+echo "# If this script useful, don't forget to buy me a coffee or milk... :D     #"
+echo "# My PayPal is always open for donation, send your tips here hi@masedi.net #"
+echo "#                                                                          #"
+echo "# (c) 2015 - MasEDI.Net - http://masedi.net ;)                             #"
+echo "===========================================================================#"
