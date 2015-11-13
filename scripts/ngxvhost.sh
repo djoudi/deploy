@@ -477,6 +477,7 @@ else
 				git clone https://github.com/rtCamp/nginx-helper.git $DocumentRoot/wp-content/plugins/nginx-helper
 
 				# Pre-populate blogid map, used by Nginx vhost conf
+				mkdir $DocumentRoot/wp-content/uploads/
 				mkdir $DocumentRoot/wp-content/uploads/nginx-helper/
 				touch $DocumentRoot/wp-content/uploads/nginx-helper/map.conf
 			fi
