@@ -45,24 +45,29 @@ apt-get autoremove -y
 
 # Install pre-requirements
 apt-get update
-apt-get install -y software-properties-common python-software-properties build-essential git unzip curl openssl
+apt-get install software-properties-common python-software-properties build-essential git unzip curl openssl
 
 # Add Nginx latest stable from PPA repo
 # Source: https://launchpad.net/~nginx/+archive/ubuntu/stable
+if [ ! -f "/etc/apt/sources.list.d/rtcamp-nginx-trusty.list" ]; then
 #add-apt-repository ppa:nginx/stable
 # install nginx custom with ngx cache purge from rtCamp's repo
 # https://rtcamp.com/wordpress-nginx/tutorials/single-site/fastcgi-cache-with-purging/
 add-apt-repository ppa:rtcamp/nginx
+fi
 
 # Add PHP5 (5.5 latest stable) from Ondrej's repo
 # Source: https://launchpad.net/~ondrej/+archive/ubuntu/php5
+if [ ! -f "/etc/apt/sources.list.d/ondrej-php5-trusty.list" ]; then
 add-apt-repository ppa:ondrej/php5
+fi
 
 # Add PhpMyAdmin from Nijel's repo
 # Replace phpmyadmin with adminer (simple, lighter, as powerful as phpMyAdmin)
 #add-apt-repository ppa:nijel/phpmyadmin
 
 # Add MariaDB repo from MariaDB repo configuration tool
+if [ ! -f "/etc/apt/sources.list.d/MariaDB.list" ]; then
 apt-key adv --recv-keys --keyserver hkp://keyserver.ubuntu.com:80 0xcbcb082a1bb943db
 touch /etc/apt/sources.list.d/MariaDB.list
 cat > /etc/apt/sources.list.d/MariaDB.list <<EOL
@@ -71,27 +76,28 @@ cat > /etc/apt/sources.list.d/MariaDB.list <<EOL
 deb [arch=amd64,i386] http://ftp.osuosl.org/pub/mariadb/repo/10.1/ubuntu trusty main
 deb-src http://ftp.osuosl.org/pub/mariadb/repo/10.1/ubuntu trusty main
 EOL
+fi
 
 # Update repo/packages
-apt-get -y update
+apt-get update
 
 # Update local time
-apt-get install -y ntpdate
+apt-get install ntpdate
 ntpdate -d cn.pool.ntp.org
 
 # Install Postfix mail server
-apt-get install -y postfix
+apt-get install postfix
 
 # Install Nginx - PHP5 - MariaDB - PhpMyAdmin
-apt-get install -y nginx-custom
+apt-get install nginx-custom
 # Install Php5 +FPM
-apt-get install -y snmp
+apt-get install snmp
 # removed php5-ming must be LTS
-apt-get install -y php5-fpm php5-cli php5-mysql php5-curl php5-geoip php5-gd php5-intl php5-mcrypt php5-memcached php5-memcache php5-imap php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl php-pear php5-dev spawn-fcgi fcgiwrap geoip-database
+apt-get install php5-fpm php5-cli php5-mysql php5-curl php5-geoip php5-gd php5-intl php5-mcrypt php5-memcached php5-memcache php5-imap php5-ps php5-pspell php5-recode php5-snmp php5-sqlite php5-tidy php5-xmlrpc php5-xsl php-pear php5-dev spawn-fcgi fcgiwrap geoip-database
 # Install MariaDB
-apt-get install -y mariadb-server-10.1 mariadb-client-10.1 mariadb-server-core-10.1 mariadb-common mariadb-server libmariadbclient18 mariadb-client-core-10.1
+apt-get install mariadb-server-10.1 mariadb-client-10.1 mariadb-server-core-10.1 mariadb-common mariadb-server libmariadbclient18 mariadb-client-core-10.1
 # Install memcached
-apt-get install -y memcached
+apt-get install memcached
 
 ### Install ionCube Loader ###
 if [ "$arch" = "x86_64" ]; then
@@ -189,10 +195,12 @@ service memcached restart
 sed -i "s/cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" /etc/php5/fpm/php.ini
 
 # Clone the deployment server config
+if [ ! -d "deploy" ]; then
 git clone https://github.com/joglomedia/deploy.git deploy
 # Fix file permission
 find deploy -type d -print0 | xargs -0 chmod 755
 find deploy -type f -print0 | xargs -0 chmod 644
+fi
 
 # Copy the optimized-version of php5-fpm config file
 mv /etc/php5/fpm/php-fpm.conf /etc/php5/fpm/php-fpm.conf.bak
