@@ -49,9 +49,9 @@ fi
 echo -n "Set users group? (y/n): "
 read setgroup
 if [ "${setgroup}" = "y" ]; then
-	$setgroup = "-g users"
+	setgroup="-g users"
 else
-	$setgroup = ""
+	setgroup=""
 fi
 
 useradd $sethomedir $setexpiredate $setgroup -s $setusershell $namauser
